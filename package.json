@@ -1,0 +1,22 @@
+{
+  "name": "upload-file-testv1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "python3 -m http.server --directory src 8888",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "multer": "^1.4.5-lts.1"
+  }
+}

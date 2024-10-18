@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Upload</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()">Upload</button>
+    <button onclick="CancelUpload()">Cancel</button>
+    <progress id="uploadProgress" max="100" value="0" style="width: 80%;"></progress>
+    
+    <script>
+      let currentSource;
+
+      const uploadFile = async () => {
+        const fileInput = document.getElementById('fileInput');
+        const selectedFile = fileInput.files[0]; 
+        // if (!fileInput.files.length) {
+        //   return alert('Please choose a file to upload');
+        // }
+         // if (selectedFile.type !=='image/png') {
+        //   alert('ไม่อนุญาตให้ไฟล์ประเภทนี้อัฟโหลด มาได้')
+        //   return false
+        // }
+
+        // if (selectedFile.size < 1024 * 1024 * 2) {
+        //   alert('ไม่อนุญาตให้อัฟโหลด')
+        //   return false
+        // }
+        const formData = new FormData();
+        formData.append('test', selectedFile);
+
+        try {
+          const source = axios.CancelToken.source();
+          currentSource = source;
+
+          const response = await axios.post('http://localhost:3000/upload', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            onUploadProgress: function (progressValue) {
+                uploadProgress.value = (progressValue.progress) * 100
+                console.log('progressValue', progressValue)
+            },
+            cancelToken: source.token,
+          });
+
+          console.log('Server response:', response.data);
+        } catch (error) {
+          if (axios.isCancel(error)) {
+            alert('Upload canceled');
+          } else {
+            alert(error.response ? error.response.data.message : 'Error uploading file');
+          }
+          document.getElementById('uploadProgress').value = 0;
+        }
+      };
+
+      const CancelUpload = () => {
+        if (currentSource) {
+          currentSource.cancel('Upload canceled');
+        }
+      };
+    </script>
+  </body>
+</html> 
